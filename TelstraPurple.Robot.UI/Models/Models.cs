@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TelstraPurple.Robot.UI.Models
 {
-    public class Well
+    public class Cell
     {
         public int X { get; set; }
         public int Y { get; set; }

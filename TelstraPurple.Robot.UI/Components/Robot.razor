@@ -64,16 +64,16 @@
     private int noSquares;
     private Location presentLocation;
     private Array fakeArray;
-    private List<Well> plate = new List<Well>();
+    private List<Cell> plate = new List<Cell>();
     private string commands;
 
     protected override async Task OnInitializedAsync()
     {
         this.noSquaresInEachSide = DEFAULT_NO_OF_WELLS_PER_SIDE;
 
-        fakeArray = new Well[5];
+        fakeArray = new Cell[5];
 
-        List<Well> plate = new List<Well>();
+        List<Cell> plate = new List<Cell>();
 
         commands = string.Empty;
     }
@@ -106,17 +106,17 @@
 
     void bind()
     {
-        this.plate = new List<Well>();
+        this.plate = new List<Cell>();
 
         for (var i = 0; i < this.noSquaresInEachSide; i++)
         {
             for (var j = 0; j < this.noSquaresInEachSide; j++)
             {
-                this.plate.Add(new Well { X = i, Y = j });
+                this.plate.Add(new Cell { X = i, Y = j });
             }
         }
 
-        this.fakeArray = new Well[this.noSquaresInEachSide];
+        this.fakeArray = new Cell[this.noSquaresInEachSide];
     }
 
     async Task sample()
@@ -215,12 +215,12 @@ MOVE";
         });
     }
 
-    List<Well> getWells(int y)
+    List<Cell> getWells(int y)
     {
         return this.plate.Where(x => x.Y == (y - 1)).ToList();
     }
 
-    Well getWell(int x, int y)
+    Cell getWell(int x, int y)
     {
         var well = this.plate.Find(z => z.X == x && z.Y == y);
 
