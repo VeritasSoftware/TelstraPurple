@@ -20,7 +20,6 @@ namespace TelstraPurple.Robot.UI.Models
     public enum CommandType
     {
         PLACE,
-        DETECT,
         MOVE,
         LEFT,
         RIGHT,
