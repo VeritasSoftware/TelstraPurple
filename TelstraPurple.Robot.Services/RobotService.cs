@@ -2,31 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TelstraPurple.Robot.UI.Models;
+using TelstraPurple.Robot.Models;
 
-namespace TelstraPurple.Robot.UI.Services
+namespace TelstraPurple.Robot.Services
 {
     public class RobotService : IRobotService
     {
         public IEnumerable<Command> ParseCommands(string commands)
         {
-            var temp = new List<Command>();
-
             //get command lines
-            var lines = Regex.Match(commands, "^((?<lines>.+?)((\r)?\n|$))+$").Groups["lines"].Captures.Select(x => x.Value);
+            var lines = Regex.Match(commands, "^((?<lines>.+?)((\r)?\n|$))+$")
+                                .Groups["lines"]
+                                .Captures.Cast<Capture>()
+                                .Select(x => x.Value);
 
             //parse each command line
-            for (var i = 0; i < lines.Count(); i++)
-            {
-                var command = this.ParseLine(lines.ElementAt(i));
+            var commandList = lines.Select(x => this.ParseLine(x)).Where(x => x != null);
 
-                if (command != null)
-                {
-                    temp.Add(command);
-                }
-            }
-
-            return temp;
+            return commandList;
         }
 
         public Command ParseLine(string line)

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using TelstraPurple.Robot.UI.Models;
+using TelstraPurple.Robot.Models;
 
-namespace TelstraPurple.Robot.UI.Services
+namespace TelstraPurple.Robot.Services
 {
     public interface IRobotService
     {

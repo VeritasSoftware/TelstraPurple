@@ -20,7 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TelstraPurple.Robot.UI\TelstraPurple.Robot.UI.csproj" />
+    <ProjectReference Include="..\TelstraPurple.Robot.Models\TelstraPurple.Robot.Models.csproj" />
+    <ProjectReference Include="..\TelstraPurple.Robot.Services\TelstraPurple.Robot.Services.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,6 @@
-using System;
 using System.Linq;
-using TelstraPurple.Robot.UI.Models;
-using TelstraPurple.Robot.UI.Services;
+using TelstraPurple.Robot.Models;
+using TelstraPurple.Robot.Services;
 using Xunit;
 
 namespace TelstraPurple.Robot.UnitTests
