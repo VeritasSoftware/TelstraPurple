@@ -23,6 +23,7 @@ namespace TelstraPurple.Robot.UnitTests
 
             var commands = robotService.ParseCommands(strCommands);
 
+            Assert.Equal(5, commands.Count());
             Assert.Equal(CommandType.PLACE, commands.ElementAt(0).Name);
             Assert.Equal(CommandType.MOVE, commands.ElementAt(1).Name);
             Assert.Equal(CommandType.MOVE, commands.ElementAt(2).Name);
@@ -40,12 +41,37 @@ namespace TelstraPurple.Robot.UnitTests
 
             commands = robotService.ParseCommands(strCommands);
 
+            Assert.Equal(6, commands.Count());
             Assert.Equal(CommandType.PLACE, commands.ElementAt(0).Name);
             Assert.Equal(CommandType.MOVE, commands.ElementAt(1).Name);
             Assert.Equal(CommandType.LEFT, commands.ElementAt(2).Name);
             Assert.Equal(CommandType.MOVE, commands.ElementAt(3).Name);
             Assert.Equal(CommandType.PLACE, commands.ElementAt(4).Name);
             Assert.Equal(CommandType.MOVE, commands.ElementAt(5).Name);
+        }
+
+        [Fact]
+        public void ParseCommands_Ignore_InvalidCommand_Success()
+        {
+            var robotService = new RobotService();
+
+            var strCommands = @"
+                PLACE 1,2,EAST
+                MOVE
+                ABC - Invalid
+                MOVE
+                LEFT
+                MOVE
+            ";
+
+            var commands = robotService.ParseCommands(strCommands);
+
+            Assert.Equal(5, commands.Count());
+            Assert.Equal(CommandType.PLACE, commands.ElementAt(0).Name);
+            Assert.Equal(CommandType.MOVE, commands.ElementAt(1).Name);
+            Assert.Equal(CommandType.MOVE, commands.ElementAt(2).Name);
+            Assert.Equal(CommandType.LEFT, commands.ElementAt(3).Name);
+            Assert.Equal(CommandType.MOVE, commands.ElementAt(4).Name);            
         }
 
         [Fact]
