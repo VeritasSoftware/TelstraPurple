@@ -22,4 +22,4 @@ You can create a table with cells.
 
 You can move the robot on the table by issuing commands.
 
-![Screenshot](https://github.com/VeritasSoftware/TelstraPurple/blob/master/Screenshot.JPG)
+![Screenshot](https://github.com/VeritasSoftware/TelstraPurple/blob/main/Screenshot.JPG)
