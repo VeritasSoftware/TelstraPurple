@@ -6,10 +6,10 @@
 
 <h3>Toy Robot</h3>
 
-<b>Enter no of wells per side</b>
+<b>Enter no of cells per side</b>
 <br />
 <input class="input" type="text" @bind="noSquaresInEachSide" />
-<input class="button button2" @onclick="setWellsPerSide" type="button" value="Create" />
+<input class="button button2" @onclick="setCellsPerSide" type="button" value="Create" />
 
 <hr />
 
@@ -22,25 +22,43 @@
 <input class="button button2" @onclick="sample" type="button" value="Try sample" />
 <hr />
 
+@if (isError)
+{
+    <div style="color:red;">
+        <b>@errorMsg</b>
+        <br />
+    </div>
+}
+
 <table>
-    @foreach (var wells in fakeArray)
+    @foreach (var cells in fakeArray)
     {
         <tr>
-            @foreach (var well in getWells(noSquaresInEachSide - currentElementIndex))
+            @foreach (var cell in getCells(noSquaresInEachSide - currentElementIndex))
             {
                 <td>
 
-                    @if (presentLocation != null && ((well.X == presentLocation.X) && (well.Y == presentLocation.Y)))
+                    @if (presentLocation != null && ((cell.X == presentLocation.X) && (cell.Y == presentLocation.Y)))
                     {
                         <div class="well present">
-                            @well.X, @well.Y
+                            @cell.X, @cell.Y
                             <div style="text-align:center;padding-top: 12px;">@presentLocation.Direction.ToString()</div>
+                        </div>
+                    }
+                    else if (IsInPath(cell.X, cell.Y))
+                    {
+                        <div class="full">
+                            @{
+                                var pathCell = GetPathCell(cell.X, cell.Y);
+                            }
+                            @pathCell.X, @pathCell.Y
+                            <div style="text-align:center;padding-top: 12px;">@pathCell.Direction.ToString()</div>
                         </div>
                     }
                     else
                     {
                         <div class="well">
-                            @well.X, @well.Y                            
+                            @cell.X, @cell.Y
                         </div>
                     }
                 </td>
@@ -53,12 +71,12 @@
 <b>Notes:</b>
 
 <ul>
-    <li>Maroon border indicates the current well position.</li>
+    <li>Maroon border indicates the current cell position.</li>
 </ul>
 
 
 @code {
-    const int DEFAULT_NO_OF_WELLS_PER_SIDE = 6;
+    const int DEFAULT_NO_OF_CELLS_PER_SIDE = 6;
     private int currentElementIndex = 0;
     private int noSquaresInEachSide;
     private int noSquares;
@@ -66,10 +84,13 @@
     private Array fakeArray;
     private List<Cell> plate = new List<Cell>();
     private string commands;
+    List<Location> path = new List<Location>();
+    bool isError = false;
+    string errorMsg = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        this.noSquaresInEachSide = DEFAULT_NO_OF_WELLS_PER_SIDE;
+        this.noSquaresInEachSide = DEFAULT_NO_OF_CELLS_PER_SIDE;
 
         fakeArray = new Cell[5];
 
@@ -83,7 +104,7 @@
         return index + 1;
     }
 
-    async Task setWellsPerSide()
+    async Task setCellsPerSide()
     {
         if (this.noSquaresInEachSide > 0)
         {
@@ -95,7 +116,7 @@
         }
         else
         {
-            this.noSquaresInEachSide = DEFAULT_NO_OF_WELLS_PER_SIDE;
+            this.noSquaresInEachSide = DEFAULT_NO_OF_CELLS_PER_SIDE;
         }
 
         await InvokeAsync(() =>
@@ -123,7 +144,7 @@
     {
         this.noSquaresInEachSide = 6;
         this.currentElementIndex = 0;
-        await this.setWellsPerSide();
+        await this.setCellsPerSide();
         this.commands = @"PLACE 1,2,EAST
 MOVE
 MOVE
@@ -141,91 +162,112 @@ MOVE";
         await this.process();
     }
 
-    async Task process()
+    bool IsInPath(int x, int y)
     {
-        this.noSquares = noSquaresInEachSide * noSquaresInEachSide;
-        this.bind();
-
-        //if no commands, return
-        if (!string.IsNullOrEmpty(this.commands) && Regex.Match(this.commands, @"^\s*$").Success)
-        {
-            return;
-        }
-
-        //process commands
-        var commands = this.robotService.ParseCommands(this.commands);
-
-        bool isPlaced = false;
-
-        commands.ToList().ForEach(command =>
-        {
-            if (command != null)
-            {
-                switch (command.Name)
-                {
-                    case CommandType.PLACE:
-                        Location location = null;
-                        if (presentLocation != null)
-                        {
-                            location = this.robotService.ParsePlaceArgs(command.Arguments, presentLocation.Direction);
-                        }
-                        else
-                        {
-                            location = this.robotService.ParsePlaceArgs(command.Arguments);
-                        }
-
-                        if (location != null && this.isInBounds(location.X, location.Y, this.noSquaresInEachSide))
-                        {
-                            this.presentLocation = location;
-                            isPlaced = true;
-                        }
-                        break;
-                    case CommandType.MOVE:
-                        if (isPlaced)
-                        {
-                            var locationAfterMove = this.robotService.ParseMove(this.presentLocation);
-
-                            if (locationAfterMove != null && this.isInBounds(locationAfterMove.X, locationAfterMove.Y, this.noSquaresInEachSide))
-                            {
-                                this.presentLocation = locationAfterMove;
-                            }
-                        }
-                        break;
-                    case CommandType.LEFT:
-                        if (isPlaced)
-                        {
-                            this.presentLocation = this.robotService.ParseDirection(this.presentLocation, Movement.LEFT);
-                        }
-                        break;
-                    case CommandType.RIGHT:
-                        if (isPlaced)
-                        {
-                            this.presentLocation = this.robotService.ParseDirection(this.presentLocation, Movement.RIGHT);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
-
-        await InvokeAsync(() =>
-        {
-            base.StateHasChanged();
-        });
+        return this.path.Any(p => p.X == x && p.Y == y);
     }
 
-    List<Cell> getWells(int y)
+    Location GetPathCell(int x, int y)
+    {
+        return this.path.Where(p => p.X == x && p.Y == y).FirstOrDefault();
+    }
+
+    async Task process()
+    {
+        try
+        {
+            this.clearLastRun();
+            this.noSquares = noSquaresInEachSide * noSquaresInEachSide;
+            this.bind();
+
+            //if no commands, return
+            if (!string.IsNullOrEmpty(this.commands) && Regex.Match(this.commands, @"^\s*$").Success)
+            {
+                return;
+            }
+
+            //process commands
+            var commands = this.robotService.ParseCommands(this.commands);
+
+            bool isPlaced = false;
+
+            commands.ToList().ForEach(command =>
+            {
+                if (command != null)
+                {
+                    switch (command.Name)
+                    {
+                        case CommandType.PLACE:
+                            Location location = null;
+                            if (presentLocation != null)
+                            {
+                                location = this.robotService.ParsePlaceArgs(command.Arguments, presentLocation.Direction);
+                            }
+                            else
+                            {
+                                location = this.robotService.ParsePlaceArgs(command.Arguments);
+                            }
+
+                            if (location != null && this.isInBounds(location.X, location.Y, this.noSquaresInEachSide))
+                            {
+                                this.presentLocation = location;
+                                path.Add(this.presentLocation);
+                                isPlaced = true;
+                            }
+                            break;
+                        case CommandType.MOVE:
+                            if (isPlaced)
+                            {
+                                var locationAfterMove = this.robotService.ParseMove(this.presentLocation);
+
+                                if (locationAfterMove != null && this.isInBounds(locationAfterMove.X, locationAfterMove.Y, this.noSquaresInEachSide))
+                                {
+                                    this.presentLocation = locationAfterMove;
+                                    path.Add(this.presentLocation);
+                                }
+                            }
+                            break;
+                        case CommandType.LEFT:
+                            if (isPlaced)
+                            {
+                                this.presentLocation = this.robotService.ParseDirection(this.presentLocation, Movement.LEFT);
+                            }
+                            break;
+                        case CommandType.RIGHT:
+                            if (isPlaced)
+                            {
+                                this.presentLocation = this.robotService.ParseDirection(this.presentLocation, Movement.RIGHT);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
+
+            await InvokeAsync(() =>
+            {
+                base.StateHasChanged();
+            });
+        }
+        catch(Exception ex)
+        {
+            errorMsg = ex.Message;
+            isError = true;
+        }
+    }
+
+    List<Cell> getCells(int y)
     {
         return this.plate.Where(x => x.Y == (y - 1)).ToList();
     }
 
-    Cell getWell(int x, int y)
+    Cell getCell(int x, int y)
     {
-        var well = this.plate.Find(z => z.X == x && z.Y == y);
+        var cell = this.plate.Find(z => z.X == x && z.Y == y);
 
-        if (well != null)
-            return well;
+        if (cell != null)
+            return cell;
 
         return null;
     }
@@ -235,8 +277,19 @@ MOVE";
         return (x >= 0 && x < noOfWellsPerSide) && (y >= 0 && y < noOfWellsPerSide);
     }
 
+    void clearLastRun()
+    {
+        isError = false;
+        errorMsg = string.Empty;
+        this.path = new List<Location>();
+        this.bind();
+        this.presentLocation = null;
+    }
+
     void clear()
     {
+        isError = false;
+        errorMsg = string.Empty;
         this.commands = string.Empty;
         this.presentLocation = null;
         this.bind();

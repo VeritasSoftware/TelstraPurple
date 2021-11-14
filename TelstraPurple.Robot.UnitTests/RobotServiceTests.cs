@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using TelstraPurple.Robot.Models;
 using TelstraPurple.Robot.Services;
@@ -8,7 +9,7 @@ namespace TelstraPurple.Robot.UnitTests
     public class RobotServiceTests
     {
         [Fact]
-        public void Commands_Parse_Success()
+        public void ParseCommands_Success()
         {
             var robotService = new RobotService();
 
@@ -46,5 +47,28 @@ namespace TelstraPurple.Robot.UnitTests
             Assert.Equal(CommandType.PLACE, commands.ElementAt(4).Name);
             Assert.Equal(CommandType.MOVE, commands.ElementAt(5).Name);
         }
+
+        [Fact]
+        public void ParseCommands_Place_Command_Not_First_Command_Failure()
+        {
+            var robotService = new RobotService();
+
+            var strCommands = @"
+                MOVE
+                MOVE
+                LEFT
+                MOVE
+            ";
+
+            try
+            {
+                var commands = robotService.ParseCommands(strCommands);
+            }
+            catch(Exception ex)
+            {
+                Assert.Equal("PLACE x, y NORTH|SOUTH|EAST|WEST should be the first command.", ex.Message);
+            }            
+        }
+
     }
 }

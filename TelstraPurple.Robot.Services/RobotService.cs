@@ -11,13 +11,21 @@ namespace TelstraPurple.Robot.Services
         public IEnumerable<Command> ParseCommands(string commands)
         {
             //get command lines
-            var lines = Regex.Match(commands, "^((?<lines>.+?)((\r)?\n|$))+$")
+            var lines = Regex.Match(commands, "^((?<lines>.*?)((\r)?\n|$))+$")
                                 .Groups["lines"]
                                 .Captures.Cast<Capture>()
-                                .Select(x => x.Value);
+                                .Select(x => x.Value)
+                                .ToList();
 
             //parse each command line
-            var commandList = lines.Select(x => this.ParseLine(x)).Where(x => x != null);
+            var commandList = lines.Select(x => this.ParseLine(x)).Where(x => x != null).ToList();
+
+            var firstCommand = commandList.FirstOrDefault();
+
+            if (firstCommand != null && firstCommand.Name != CommandType.PLACE)
+            {
+                throw new ApplicationException("PLACE x, y NORTH|SOUTH|EAST|WEST should be the first command.");
+            }
 
             return commandList;
         }

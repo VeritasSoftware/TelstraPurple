@@ -5,11 +5,17 @@ VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelstraPurple.Robot.UI", "TelstraPurple.Robot.UI\TelstraPurple.Robot.UI.csproj", "{C1E15675-D442-4F12-A2AC-D7F2D9E8DA6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelstraPurple.Robot.UnitTests", "TelstraPurple.Robot.UnitTests\TelstraPurple.Robot.UnitTests.csproj", "{BBFA20EA-107C-448D-A994-5613F03711EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelstraPurple.Robot.UnitTests", "TelstraPurple.Robot.UnitTests\TelstraPurple.Robot.UnitTests.csproj", "{BBFA20EA-107C-448D-A994-5613F03711EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelstraPurple.Robot.Services", "TelstraPurple.Robot.Services\TelstraPurple.Robot.Services.csproj", "{84FE5A25-0D52-4718-9676-57DDEDC16D50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelstraPurple.Robot.Services", "TelstraPurple.Robot.Services\TelstraPurple.Robot.Services.csproj", "{84FE5A25-0D52-4718-9676-57DDEDC16D50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelstraPurple.Robot.Models", "TelstraPurple.Robot.Models\TelstraPurple.Robot.Models.csproj", "{EF66E409-B3B5-4D22-997B-FD26EF5D5133}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelstraPurple.Robot.Models", "TelstraPurple.Robot.Models\TelstraPurple.Robot.Models.csproj", "{EF66E409-B3B5-4D22-997B-FD26EF5D5133}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5FE6F7DC-082E-4385-8C87-66B4E40999DA}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		Screenshot.JPG = Screenshot.JPG
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
